@@ -191,7 +191,8 @@ def predict_cubes(model_path, continue_job, only_patient_id=None, luna16=False, 
             labels_df = pandas.read_csv("resources/stage1_labels.csv")
             labels_df.set_index(["id"], inplace=True)
         else:
-            labels_df = pandas.read_csv("resources/stage2_sample_submission.csv")
+            #labels_df = pandas.read_csv("resources/stage2_sample_submission.csv")
+            labels_df = pandas.read_csv("resources/tc_sample_submission.csv")
             labels_df.set_index(["id"], inplace=True)
 
     patient_ids = []
@@ -299,7 +300,9 @@ def predict_cubes(model_path, continue_job, only_patient_id=None, luna16=False, 
                                     diameter_perc = round(2 * step / patient_img.shape[2], 4)
                                     diameter_perc = round(diameter_mm / patient_img.shape[2], 4)
                                     nodule_chance = round(nodule_chance, 4)
-                                    patient_predictions_csv_line = [annotation_index, p_x_perc, p_y_perc, p_z_perc, diameter_perc, nodule_chance, diameter_mm]
+                                    #patient_predictions_csv_line = [annotation_index, p_x_perc, p_y_perc, p_z_perc, diameter_perc, nodule_chance, diameter_mm]
+                                    patient_predictions_csv_line = [annotation_index, p_x_perc, p_y_perc, p_z_perc, diameter_perc, nodule_chance, diameter_mm, p_x, p_y, p_z]
+                                    #patient_predictions_csv_line = [annotation_index, p_x, p_y, p_z, diameter_perc, nodule_chance, diameter_mm]
                                     patient_predictions_csv.append(patient_predictions_csv_line)
                                     all_predictions_csv.append([patient_id] + patient_predictions_csv_line)
                                     annotation_index += 1
@@ -310,7 +313,7 @@ def predict_cubes(model_path, continue_job, only_patient_id=None, luna16=False, 
                     if done_count % 10000 == 0:
                         print("Done: ", done_count, " skipped:", skipped_count)
 
-        df = pandas.DataFrame(patient_predictions_csv, columns=["anno_index", "coord_x", "coord_y", "coord_z", "diameter", "nodule_chance", "diameter_mm"])
+        df = pandas.DataFrame(patient_predictions_csv, columns=["anno_index", "coord_x", "coord_y", "coord_z", "diameter", "nodule_chance", "diameter_mm", "abs_x", "abs_y", "abs_z"])
         filter_patient_nodules_predictions(df, patient_id, CROP_SIZE * magnification)
         df.to_csv(csv_target_path, index=False)
 

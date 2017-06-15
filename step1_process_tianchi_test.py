@@ -1,4 +1,4 @@
-import settings
+import settings_tc as settings
 import helpers
 import SimpleITK  # conda install -c https://conda.anaconda.org/simpleitk SimpleITK
 import numpy
@@ -612,16 +612,18 @@ def process_images(delete_existing=False, only_process_patient=None):
         os.mkdir(settings.LUNA16_EXTRACTED_IMAGE_DIR)
         os.mkdir(settings.LUNA16_EXTRACTED_IMAGE_DIR + "_labels/")
 
-    for subject_no in range(settings.LUNA_SUBSET_START_INDEX, 10):
+    #for subject_no in range(settings.LUNA_SUBSET_START_INDEX, 10):
+    for subject_no in range(2,5):
         #src_dir = settings.LUNA16_RAW_SRC_DIR + "train_subset" + str(subject_no).zfill(2) + "/"
-        src_dir = settings.LUNA16_RAW_SRC_DIR + "subset" + str(subject_no) + "/"
+        src_dir = settings.LUNA16_RAW_SRC_DIR + "test_subset" + str(subject_no).zfill(2) + "/"
         
         src_paths = glob.glob(src_dir + "*.mhd")
         print("src_dir: {}". format(src_dir))
         print("src_paths: {}". format(src_paths))
         if only_process_patient is None and True:
-            pool = multiprocessing.Pool(6)
+            pool = multiprocessing.Pool(4)
             pool.map(process_image, src_paths)
+            del pool
         else:
             for src_path in src_paths:
                 print(src_path)
@@ -710,8 +712,8 @@ def process_lidc_annotations(only_patient=None, agreement_threshold=0):
 
 
 if __name__ == "__main__":
-    if False:
-        only_process_patient = None
+    if True:
+        only_process_patient = None #'LKDS-00132'
         process_images(delete_existing=False, only_process_patient=only_process_patient)
 
     if False:
@@ -721,7 +723,7 @@ if __name__ == "__main__":
         process_pos_annotations_patient2()
         process_excluded_annotations_patients(only_patient=None)
 
-    if True:
+    if False:
         process_luna_candidates_patients(only_patient_id=None)
-    if True:
+    if False:
         process_auto_candidates_patients()
